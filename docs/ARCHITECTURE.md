@@ -4,55 +4,56 @@
 
 1. **Agents are independent.** Each agent is a single file and knows nothing about the others. You can delete `weather_agent.py` and the rest keeps working.
 2. **Core server is dumb.** `server.py` just wires things up. No business logic lives there.
-3. **Everything persists to simple JSON files.** No DB server, no Docker, no fuss. Trade-off: not suitable for concurrent multi-writer workloads — but perfect for a learning project.
+3. **Everything persists to simple JSON files.** No DB server, no Docker, no fuss. Trade-off: not suitable for concurrent multi-writer workloads - but perfect for a learning project.
 4. **Tests are offline.** The mock weather agent is deterministic on purpose so the suite stays reproducible.
 
 ## Components
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                    FastMCP server                    │
-│                      (server.py)                     │
-└──────────────────────┬───────────────────────────────┘
-                       │ "attach everything"
-                       ▼
-┌──────────────────────────────────────────────────────┐
-│                  AgentRegistry                       │
-│                   (registry.py)                      │
-│   register_default_agents() → [task, notes, ...]     │
-└──────┬────────┬────────┬────────┬────────┬────────┬──┘
-       │        │        │        │        │        │
-       ▼        ▼        ▼        ▼        ▼        ▼
-    ┌─────┐ ┌─────┐ ┌──────┐ ┌────────┐ ┌────┐ ┌────┐
-    │task │ │notes│ │weathr│ │finance │ │file│ │ kb │
-    └──┬──┘ └──┬──┘ └──┬───┘ └───┬────┘ └────┘ └──┬─┘
-       │       │       │         │                │
-       └───────┴───────┴─────────┴────────────────┘
-                         │
-                         ▼
-               ┌──────────────────┐
-               │     JsonStore    │
-               │   (storage.py)   │
-               └──────────────────┘
-                         │
-                         ▼
-                    data/*.json
+                        FastMCP server
+                         (server.py)
+                              |
+                              | "attach everything"
+                              v
+                        AgentRegistry
+                        (registry.py)
+        register_default_agents() -> [task, notes, ...]
+                              |
+       +--------+--------+----+----+--------+--------+
+       |        |        |        |        |        |
+       v        v        v        v        v        v
+     task    notes   weather  finance   file      kb
+       |        |        |        |        |        |
+       +--------+--------+--------+--------+--------+
+                              |
+                              v
+                          JsonStore
+                         (storage.py)
+                              |
+                              v
+                        data/*.json
 ```
 
 ### server.py
+
 Builds a `FastMCP` instance, asks the registry to attach every enabled agent, then adds two server-level tools (`server_info`, `ping`), one resource (`server://agents`), and a starter prompt (`getting_started`).
 
 ### registry.py
-Holds a map of `name → factory`. Lazy: agents are only constructed when attached. This is what makes the "microservices" story work — each agent is a cleanly separable unit you can enable/disable at runtime through `settings.enabled_agents`.
+
+Holds a map of `name -> factory`. Lazy: agents are only constructed when attached. This is what makes the "microservices" story work - each agent is a cleanly separable unit you can enable/disable at runtime through `settings.enabled_agents`.
 
 ### storage.py
+
 A thread-safe JSON file store with atomic writes (tempfile + rename). Each agent gets its own file.
 
 ### agents/base.py
+
 Abstract class with two contracts: `name` and `register(mcp)`. Subclasses pick how they persist data, what tools they expose, etc. Tiny surface area on purpose.
 
 ### agents/*.py
+
 The actual work. Each agent:
+
 1. Initialises its own `JsonStore` in `__init__`.
 2. In `register(mcp)`, defines closures decorated with `@mcp.tool()` / `@mcp.resource()` / `@mcp.prompt()` and attaches them to the server.
 
@@ -62,18 +63,18 @@ Because the decorators capture `self` (as `agent = self`) in a closure, agents s
 
 ```
 client calls "task_add"
-        │
-        ▼
+        |
+        v
 FastMCP dispatches to the closure defined in task_agent.register
-        │
-        ▼
-closure validates args → mutates task list → calls JsonStore.save
-        │
-        ▼
+        |
+        v
+closure validates args -> mutates task list -> calls JsonStore.save
+        |
+        v
 JsonStore writes to data/tasks.json atomically (tempfile + rename)
-        │
-        ▼
-closure returns the new task dict → FastMCP serialises → client receives
+        |
+        v
+closure returns the new task dict -> FastMCP serialises -> client receives
 ```
 
 ## Why JSON files and not SQLite?

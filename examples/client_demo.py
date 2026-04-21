@@ -37,7 +37,7 @@ async def main() -> None:
         async with ClientSession(read, write) as session:
             await session.initialize()
 
-            # 1. What tools does the server expose?
+            # 1. What tools does the server expose
             tools = await session.list_tools()
             print(f"Discovered {len(tools.tools)} tools:")
             for t in tools.tools:
@@ -45,7 +45,7 @@ async def main() -> None:
 
             # 2. Quick liveness check
             pong = await session.call_tool("ping", {})
-            print("\nping →", pong.content[0].text if pong.content else pong)
+            print("\nping ->", pong.content[0].text if pong.content else pong)
 
             # 3. Add two tasks, list them
             await session.call_tool(
@@ -55,13 +55,13 @@ async def main() -> None:
                 "task_add", {"title": "add your own agent", "priority": "medium"}
             )
             tasks = await session.call_tool("task_list", {})
-            print("\ntask_list →")
+            print("\ntask_list ->")
             for block in tasks.content:
                 print(" ", block.text if hasattr(block, "text") else block)
 
             # 4. Mock weather
             wx = await session.call_tool("weather_current", {"city": "Jaipur"})
-            print("\nweather_current(Jaipur) →")
+            print("\nweather_current(Jaipur) ->")
             for block in wx.content:
                 print(" ", block.text if hasattr(block, "text") else block)
 

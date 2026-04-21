@@ -43,8 +43,8 @@ def _mock_forecast(city: str, day: str) -> dict[str, Any]:
     rnd = random.Random(_seed_for(city, day))
     base_c = rnd.uniform(-5, 30)  # temperature in C
     temp_c = round(base_c, 1)
-    # Derive °F from the *rounded* °C so conversions are self-consistent
-    # (callers that round-trip °C → °F → °C shouldn't see drift).
+    # Derive  deg F from the *rounded*  deg C so conversions are self-consistent
+    # (callers that round-trip  deg C ->  deg F ->  deg C shouldn't see drift).
     return {
         "city": city,
         "date": day,

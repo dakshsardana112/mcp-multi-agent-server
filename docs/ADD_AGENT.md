@@ -63,7 +63,7 @@ from .agents.quotes_agent import QuotesAgent
 pairs = [
     ("task", TaskAgent),
     ...,
-    ("quotes", QuotesAgent),       # ← new
+    ("quotes", QuotesAgent),       # <- new
 ]
 ```
 
@@ -90,7 +90,7 @@ def test_random_returns_none_when_empty():
     assert call(mcp, "quotes_random") is None
 ```
 
-Run `pytest -q` — you should have 60+ tests passing.
+Run `pytest -q` - you should have 60+ tests passing.
 
 ## 4. Update docs
 
@@ -100,7 +100,7 @@ That's it. The agent is now live the next time the server boots.
 
 ## Tips
 
-- Keep all validation in the tool closures. Raise `ValueError` / `KeyError` — MCP will surface the message to the client.
+- Keep all validation in the tool closures. Raise `ValueError` / `KeyError` - MCP will surface the message to the client.
 - Prefer small, composable tools over one god-tool. Models pick better when each tool does one thing.
-- Docstrings are schema documentation — they're what the model reads to decide *when* to call your tool. Write them for the model, not just humans.
+- Docstrings are schema documentation - they're what the model reads to decide *when* to call your tool. Write them for the model, not just humans.
 - Use `JsonStore.update(fn)` whenever you do read-modify-write; it's the only way to stay atomic across concurrent calls.

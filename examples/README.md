@@ -18,5 +18,5 @@ What it does:
 5. Enumerates resources (`server://agents`, `task://all`, ...).
 6. Enumerates prompts.
 
-If this runs cleanly, your full stack (server ↔ MCP client library) is
+If this runs cleanly, your full stack (server <-> MCP client library) is
 working. Use it as a template for building real clients.

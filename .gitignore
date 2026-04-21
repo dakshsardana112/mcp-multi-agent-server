@@ -36,3 +36,7 @@ data/*.json
 
 # OS
 Thumbs.db
+
+# local build artifacts
+*.tar.gz
+GIT_HISTORY.txt

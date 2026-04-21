@@ -12,7 +12,7 @@ def test_current_weather_is_deterministic():
     _, mcp = build_agent(WeatherAgent)
     a = call(mcp, "weather_current", city="Mumbai")
     b = call(mcp, "weather_current", city="Mumbai")
-    # Same day + same city → identical forecast (shape + values)
+    # Same day + same city -> identical forecast (shape + values)
     for k in ("condition", "temp_c", "humidity_pct", "wind_kph"):
         assert a[k] == b[k]
     assert a["temp_f"] == round(a["temp_c"] * 9 / 5 + 32, 1)

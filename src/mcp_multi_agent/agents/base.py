@@ -4,8 +4,8 @@ An "agent" in this project is a small, self-contained module that owns a
 single domain (tasks, notes, weather, etc.). The base class only asks for
 two things:
 
-    1. ``name``      — short identifier, used as a prefix on tool names.
-    2. ``register``  — attach tools / resources / prompts to the FastMCP
+    1. ``name``      - short identifier, used as a prefix on tool names.
+    2. ``register``  - attach tools / resources / prompts to the FastMCP
                        server.
 
 Everything else (storage, helper methods, data models) is up to the agent.

@@ -105,7 +105,7 @@ class TaskAgent(BaseAgent):
                 results = [t for t in results if t["status"] == status]
             if priority is not None:
                 results = [t for t in results if t["priority"] == priority]
-            # Sort: open first, then by priority (high→low), then by due date.
+            # Sort: open first, then by priority (high->low), then by due date.
             order = {"open": 0, "in_progress": 1, "done": 2}
             pri = {"high": 0, "medium": 1, "low": 2}
             results.sort(
