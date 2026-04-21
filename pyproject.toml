@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-multi-agent-server"
+version = "0.1.0"
+description = "A learning-oriented MCP server with multiple domain agents wired up microservice-style."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Daksh Sardana", email = "dakshsardana112@gmail.com" }]
+license = { text = "MIT" }
+dependencies = [
+    "mcp>=1.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0.0", "pytest-asyncio>=0.23.0"]
+
+[project.scripts]
+mcp-multi-agent = "mcp_multi_agent.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
